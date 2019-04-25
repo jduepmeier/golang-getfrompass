@@ -32,7 +32,7 @@ type PassExitError struct {
 	Err     error
 }
 
-// Error retuns the message that pass has exited with an error.
+// Error returns the message that pass has exited with an error.
 func (err PassExitError) Error() string {
 	return fmt.Sprintf("pass has exited with the following message: %s", err.Message)
 }
