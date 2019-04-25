@@ -3,53 +3,10 @@
 package getfrompass
 
 import (
-	"errors"
-	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 )
-
-var (
-	ErrEmptyPassword    error = errors.New("no password found")
-	ErrPassExecNotFound error = errors.New("could not find pass executable")
-)
-
-// KeyNotInStoreError is an Error that is returned if the key is not in
-// the password store.
-type KeyNotInStoreError struct {
-	key string
-}
-
-// Error returns the message which key is not in the password store.
-func (err KeyNotInStoreError) Error() string {
-	return fmt.Sprintf("%s is not in the password store", err.key)
-}
-
-// PassExitError is an Error that is returned if the pass command has exited
-// with an error.
-type PassExitError struct {
-	Message string
-	Err     error
-}
-
-// Error returns the message that pass has exited with an error.
-func (err PassExitError) Error() string {
-	return fmt.Sprintf("pass has exited with the following message: %s", err.Message)
-}
-
-// newKeyNotInStoreError is a helper method to create a KeyNotInStoreError
-func newKeyNotInStoreError(key string) error {
-	return KeyNotInStoreError{
-		key: key,
-	}
-}
-
-func newPassExitError(err *exec.ExitError) error {
-	return PassExitError{
-		Message: string(err.Stderr),
-		Err:     err,
-	}
-}
 
 // GetFromPass returns the password from the
 // command 'pass' (see https://www.passwordstore.org/).
@@ -69,7 +26,7 @@ func GetFromPass(key string) (string, error) {
 	// check if the pass executable is in path.
 	path, err := exec.LookPath("pass")
 	if err != nil {
-		return pass, ErrPassExecNotFound
+		return pass, newPassExecNotFoundError(os.Getenv("PATH"))
 	}
 
 	// the command to execute is 'pass show <key>'
@@ -90,7 +47,7 @@ func GetFromPass(key string) (string, error) {
 	if len(splits) > 0 {
 		pass = strings.TrimRight(splits[0], "\r")
 	} else {
-		return pass, ErrEmptyPassword
+		return pass, newPassIsEmptyError(key)
 	}
 
 	return pass, nil
