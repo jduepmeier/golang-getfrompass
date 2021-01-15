@@ -1,8 +1,7 @@
 # golang-getfrompass
 
 [![goreportcard](https://goreportcard.com/badge/github.com/jduepmeier/golang-getfrompass)](https://goreportcard.com/report/github.com/jduepmeier/golang-getfrompass)
-[![Documentation](https://godoc.org/github.com/jduepmeier/golang-getfrompass?status.svg)](http://godoc.org/github.com/jduepmeier/golang-getfrompass)
-
+[![Go Reference](https://pkg.go.dev/badge/github.com/jduepmeier/golang-getfrompass.svg)](https://pkg.go.dev/github.com/jduepmeier/golang-getfrompass)
 This is a small helper method to get a password from the pass passwordstore (https://www.passwordstore.org).
 
 ## Usage
