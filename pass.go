@@ -8,6 +8,11 @@ import (
 	"strings"
 )
 
+var (
+	lookupCommand = exec.LookPath
+	execCommand   = exec.Command
+)
+
 // GetFromPass returns the password from the
 // command 'pass' (see https://www.passwordstore.org/).
 //
@@ -24,13 +29,13 @@ func GetFromPass(key string) (string, error) {
 	var pass string
 
 	// check if the pass executable is in path.
-	path, err := exec.LookPath("pass")
+	path, err := lookupCommand("pass")
 	if err != nil {
 		return pass, newPassExecNotFoundError(os.Getenv("PATH"))
 	}
 
 	// the command to execute is 'pass show <key>'
-	out, err := exec.Command(path, "show", key).Output()
+	out, err := execCommand(path, "show", key).Output()
 	if err != nil {
 		// if the command fails the key is not in the password store.
 		if exitError, ok := err.(*exec.ExitError); ok {
@@ -44,7 +49,7 @@ func GetFromPass(key string) (string, error) {
 	}
 
 	splits := strings.Split(string(out), "\n")
-	if len(splits) > 0 {
+	if len(splits) > 0 && len(splits[0]) > 0 {
 		pass = strings.TrimRight(splits[0], "\r")
 	} else {
 		return pass, newPassIsEmptyError(key)
